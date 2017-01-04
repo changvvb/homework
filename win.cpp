@@ -52,6 +52,7 @@ char *employee_choices[] = {
     (char*)"Add",
     (char*)"List",
     (char*)"Load",
+    (char*)"Search",
     (char*)"Back",
 };
 
@@ -59,6 +60,7 @@ char *commodity_choices[] = {
     (char*)"Add",
     (char*)"List",
     (char*)"Load",
+    (char*)"Search",
     (char*)"Back",
 };
 
@@ -374,8 +376,21 @@ void commodity_func(char* name) {
         post_menu(commodity_list_menu);//替換上一级
     }else if(!strcmp(name,commodity_choices[2])){ //load
         commodity::load();
+    }else if(!strcmp(name,commodity_choices[3])){ //search
+        int id;
+        echo();
+        mvprintw(5,30,"Please input id: ");
+        scanw("%d",&id);
+        commodity* e = commodity::get_commodity_by_id(id);
+        if(e != NULL) {
+            cur_commodity = e;
+            commodity_mod_form_show(cur_commodity);
+        } else {
+            mvprintw(7,30,"No result, id:%d",id);
+        }
+        noecho();
     }
-    else if(!strcmp(name,commodity_choices[3])){
+    else if(!strcmp(name,commodity_choices[4])){
         unpost_menu(cur_menu);
         cur_menu = level1_menu;
         post_menu(level1_menu);
@@ -396,8 +411,22 @@ void employee_func(char* name) {
         post_menu(employee_list_menu);
     }else if(!strcmp(name,employee_choices[2])){ //load
         employee::load();
+     }else if(!strcmp(name,commodity_choices[3])){ //search
+        int id;
+        echo();
+        mvprintw(5,30,"Please input id: ");
+        scanw("%d",&id);
+        employee *e = employee::get_employee_by_id(id);
+        if(e != NULL) {
+            cur_employee = e;
+            employee_mod_form_show(cur_employee);
+        } else {
+            mvprintw(7,30,"No result, id:%d",id);
+        }
+        noecho();
     }
-    else if(!strcmp(name,employee_choices[3])){
+
+    else if(!strcmp(name,employee_choices[4])){
         unpost_menu(cur_menu);
         cur_menu = level1_menu;
         post_menu(level1_menu);
@@ -409,7 +438,7 @@ void employee_menu_init() {
     int n = sizeof(employee_choices)/sizeof(employee_choices[0]);
     ITEM **employee_items= (ITEM**)calloc(n+1,sizeof(ITEM*));
     for(int i=0;i<n;i++) {
-        employee_items[i] = new_item(employee_choices[i],"");
+        employee_items[i] = new_item(employee_choices[i],"employee");
         set_item_userptr(employee_items[i],(void*)employee_func);
     }
     employee_items[n] = (ITEM*)NULL;
@@ -421,7 +450,7 @@ void commodity_menu_init() {
     int n = sizeof(commodity_choices)/sizeof(commodity_choices[0]);
     commodity_items = (ITEM**)calloc(n+1,sizeof(ITEM*));
     for(int i=0;i<n;i++) {
-        commodity_items[i] = new_item(commodity_choices[i],"");
+        commodity_items[i] = new_item(commodity_choices[i],"commodity");
         set_item_userptr(commodity_items[i],(void*)commodity_func);
     }
     commodity_items[n] = (ITEM*)NULL;
